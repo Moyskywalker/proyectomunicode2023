@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MUNICODE - Registro de Sitios Turísticos</title>
+  <style>
+    
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0 10px;
+    }
+
+    section {
+      margin: 20px;
+    }
+
+    form label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    form input[type="text"],
+    form textarea {
+      width: 100%;
+      padding: 5px;
+      margin-top: 5px;
+    }
+
+    form button[type="submit"] {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+    }
+
+    table td button {
+      padding: 5px 10px;
+      background-color: #1588d4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+   
+    const sitios = JSON.parse(localStorage.getItem("sitios")) || [];
+
+    function mostrarSitios() {
+      const tabla = document.getElementById("tabla-sitios");
+      tabla.innerHTML = "";
+
+      sitios.forEach((sitio, index) => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${sitio.pais}</td>
+          <td>${sitio.nombre}</td>
+          <td>${sitio.likes}</td>
+          <td>
+            <button onclick="darLike(${index})">Like</button>
+          </td>
+        `;
+        tabla.appendChild(fila);
+      });
+    }
+
+    function darLike(index) {
+      sitios[index].likes++;
+      localStorage.setItem("sitios", JSON.stringify(sitios));
+      mostrarSitios();
+    }
+
+    function registrarSitio() {
+      // Obtener los valores del formulario y agregar el sitio a la lista de sitios
+      const pais = document.getElementById("pais").value;
+      const nombre = document.getElementById("nombre").value;
+      const horario = document.getElementById("horario").value;
+      const descripcion = document.getElementById("descripcion").value;
+
+      const nuevoSitio = {
+        pais: pais,
+        nombre: nombre,
+        horario: horario,
+        descripcion: descripcion,
+        likes: 0
+      };
+
+      sitios.push(nuevoSitio);
+      localStorage.setItem("sitios", JSON.stringify(sitios));
+      mostrarSitios();
+      limpiarFormulario();
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("pais").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("horario").value = "";
+      document.getElementById("descripcion").value = "";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      mostrarSitios();
+    });
+  </script>
+</head>
+<body>
+  <h1>MUNICODE - Registro de Sitios Turísticos</h1>
+
+  <nav>
+    <ul>
+      <li><a href="#registro">Registrar sitio</a></li>
+      <li><a href="#mostrar">Mostrar sitios</a></li>
+    </ul>
+  </nav>
+
+  <section id="registro">
+    <h2>Registrar sitio</h2>
+    <form onsubmit="event.preventDefault(); registrarSitio();">
+      <label for="pais">País:</label>
+      <select id="pais" name="pais">
+        <option value="costa_rica">Costa Rica</option>
+        <option value="guatemala">Guatemala</option>
+        <option value="honduras">Honduras</option>
+        
+      </select>
+
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre">
+
+      <label for="horario">Horario:</label>
+      <input type="text" id="horario" name="horario">
+
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" name="descripcion"></textarea>
+
+      <button type="submit">Registrar</button>
+    </form>
+  </section>
+
+  <section id="mostrar">
+    <h2>Mostrar sitios</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>País</th>
+          <th>Nombre</th>
+          <th>Likes</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-sitios">
+        
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>
